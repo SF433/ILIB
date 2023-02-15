@@ -1,6 +1,5 @@
 #ifndef ILIB_H
 #define ILIB_H
-//ILIB.h VER 1.61V
 
 #include "Arduino.h"
 #include <SPI.h>
@@ -69,6 +68,45 @@ private:
 	uint8_t m_brightness;
 	unsigned int m_bitDelay;
 };
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////						PID			                   ///////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+class IPID {
+
+public:
+	IPID();
+	void SET_DATA(double sv, double inMax, double inMin, uint8_t samplingTime= 10);
+	void OUTPUT_SCALE(long max, long min);
+	void ITERM_LIMIT(int max, int min);
+
+	long PID_OUTPUT(double pv, double kp, double ki, double kd);
+
+	//void findKuAndTu(double pv, double kp);
+	void Ziegler_Nichols_Method(double Ku, double Tu, double* P, double* I=NULL, double* D= NULL);
+protected:
+
+private:
+	uint16_t repeat_k = 0;
+	uint8_t _samplingTime;
+	long _max=255, _min=0;
+	double _sv;
+	double _inMax;
+	double _inMin;
+	double _pv;
+	double _kp;
+	double _ki;
+	double _kd;
+	double iMax, iMin = 0;
+	double errsum, preError;
+	unsigned long timeChange;
+	unsigned long lastTime = 0;
+	unsigned long lastTime1 = 0;
+	unsigned int mScan = 0;
+};
+
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////                  PWM, NTEMP                   ///////////////////////////////////////////
@@ -644,11 +682,11 @@ public:
 	void begin();				///< This method initialize the SPI port and the config register
 	void PTbegin();				///< This method initialize the SPI port and the config register
 	int IPT100(uint8_t Fchannel);
-	void INIT(uint32_t maxvalue = 32768, uint32_t minvalue = 0, uint8_t rate_value = 4);
+	void INIT(int32_t maxvalue = 32768, int32_t minvalue = 0, uint8_t rate_value = 4);
 	IADC(uint8_t io_pin_cs = 1);         ///< Constructor
 	double GET_TEMPERATURE();			///< Getting the temperature in degrees celsius from the internal sensor of the ADS1118
-	int32_t GET_ADC(uint8_t inputs, int8_t minus1_4 = 0);					///< Getting a sample from the specified input
-	int32_t GET_ADCVALUE(uint8_t inputs, int8_t minus1_4 = 0);
+	long GET_ADC(uint8_t inputs, int8_t minus1_4 = 0);					///< Getting a sample from the specified input
+	int GET_ADCVALUE(uint8_t inputs, int8_t minus1_4 = 0);
 	bool getADCValueNoWait(uint8_t pin_drdy, uint16_t& value);
 	bool getMilliVoltsNoWait(uint8_t pin_drdy, double& volts); ///< Getting the millivolts from the settled inputs
 	double getMilliVolts(uint8_t inputs);					///< Getting the millivolts from the specified inputs
