@@ -70,52 +70,6 @@ private:
 };
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////						WATCH			                   ///////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-#ifdef __AVR_ATmega2560__
-
-#define WDTO_16MS   0
-#define WDTO_32MS	1
-#define WDTO_64MS	2
-#define WDTO_125MS	3
-#define WDTO_250MS	4
-#define WDTO_500MS	5
-#define WDTO_1S	6
-#define WDTO_2S	7
-#define WDTO_4S	8
-#define WDTO_8S	9
-#endif // __AVR_ATmega2560__
-
-#ifdef __AVR_ATmega128__
-#define WDTO_14MS	0
-#define WDTO_28MS	1
-#define WDTO_56MS	2
-#define WDTO_110MS	3
-#define WDTO_220MS	4
-#define WDTO_450MS	5
-#define WDTO_900MS	6
-#define WDTO_1D8S	7
-#endif // __AVR_ATmega128__
-
-
-void WDT_ENABLE(uint8_t ms);
-void WDT_DISENABLE();
-void WDT_RESET();
-//class IWATCH {
-//
-//public:
-//	IWATCH();
-//	void SET_DATA(double sv, double inMax, double inMin, uint8_t samplingTime = 10);
-//protected:
-//
-//private:
-//	uint16_t repeat_k = 0;
-//};
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////						PID			                   ///////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -123,20 +77,20 @@ class IPID {
 
 public:
 	IPID();
-	void SET_DATA(double sv, double inMax, double inMin, uint8_t samplingTime = 10);
+	void SET_DATA(double sv, double inMax, double inMin, uint8_t samplingTime= 10);
 	void OUTPUT_SCALE(long max, long min);
 	void ITERM_LIMIT(int max, int min);
 
 	long PID_OUTPUT(double pv, double kp, double ki, double kd);
 
 	//void findKuAndTu(double pv, double kp);
-	void Ziegler_Nichols_Method(double Ku, double Tu, double* P, double* I = NULL, double* D = NULL);
+	void Ziegler_Nichols_Method(double Ku, double Tu, double* P, double* I=NULL, double* D= NULL);
 protected:
 
 private:
 	uint16_t repeat_k = 0;
 	uint8_t _samplingTime;
-	long _max = 255, _min = 0;
+	long _max=255, _min=0;
 	double _sv;
 	double _inMax;
 	double _inMin;
