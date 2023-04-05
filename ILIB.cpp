@@ -3771,22 +3771,22 @@ void TCNTSETUP(uint8_t timerNumber, bool on32bit)
 	switch (timerNumber)
 	{
 	case 1:
-		TIMSK1 = 0x00; TCCR1A = 0x00; TCCR1B = 0x1F; TCNT1 = 0x00;
+		TIMSK1 = 0x00; TCCR1A = 0x00; TCCR1B = 0x07; TCNT1 = 0x00;
 		if (on32bit == HIGH) { TIMSK1 |= (1 << TOIE1);	tcntsetupon1 = 1; }
 		break;
 
 	case 3:
-		TIMSK3 = 0x00; TCCR3A = 0x00; TCCR3B = 0x1F; TCNT3 = 0x00;
+		TIMSK3 = 0x00; TCCR3A = 0x00; TCCR3B = 0x07; TCNT3 = 0x00;
 		if (on32bit == HIGH) { TIMSK3 |= (1 << TOIE3);	tcntsetupon3 = 1; }
 		break;
 
 	case 4:
-		TIMSK4 = 0x00; TCCR4A = 0x00; TCCR4B = 0x1F; TCNT4 = 0x00;
+		TIMSK4 = 0x00; TCCR4A = 0x00; TCCR4B = 0x07; TCNT4 = 0x00;
 		if (on32bit == HIGH) { TIMSK4 |= (1 << TOIE4);	tcntsetupon4 = 1; }
 		break;
 
 	case 5:
-		TIMSK5 = 0x00; TCCR5A = 0x00; TCCR5B = 0x1F; TCNT5 = 0x00;
+		TIMSK5 = 0x00; TCCR5A = 0x00; TCCR5B = 0x07; TCNT5 = 0x00;
 		if (on32bit == HIGH) { TIMSK5 |= (1 << TOIE5);	tcntsetupon5 = 1; }
 		break;
 
@@ -4528,7 +4528,7 @@ void TCNTSETUP(uint8_t timerNumber, bool on32bit)
 	switch (timerNumber)
 	{
 	case 3:
-		ETIMSK = 0x00; TCCR3A = 0x00; TCCR3B = 0x1F; TCNT3 = 0x00;
+		ETIMSK = 0x00; TCCR3A = 0x00; TCCR3B = 0x07; TCNT3 = 0x00;
 		if (on32bit == HIGH) { ETIMSK |= (1 << TOIE3);	tcntsetupon3 = 1; }
 		break;
 
@@ -7153,8 +7153,6 @@ void MODTIMER::_overflow1_m() {
 
 #if TIMER_OVF == 1
 
-#if defined(TIMER1_OVF_vect)
-
 ISR(TIMER1_OVF_vect) {
 	if (Timer1On == true) {
 		TCNT1 = ITIMER::tcnt1;
@@ -7177,10 +7175,12 @@ ISR(TIMER1_OVF_vect) {
 	if (npwmON13 == 1) {
 		TimerCount1C++;
 	}
+	if (TIMSK1 == 0x01 && TCCR1A == 0x00 && TCCR1B == 0x07) {
+		OCR1A++;
+	}
 }
-
-#endif
 #if defined(TIMER3_OVF_vect)
+#else
 ISR(TIMER3_OVF_vect) {
 	if (Timer3On == true) {
 		TCNT3 = ITIMER::tcnt3;
@@ -7202,6 +7202,7 @@ ISR(TIMER3_OVF_vect) {
 
 #endif
 #if defined(TIMER4_OVF_vect)
+#else
 
 ISR(TIMER4_OVF_vect) {
 	if (Timer4On == true) {
@@ -7226,6 +7227,7 @@ ISR(TIMER4_OVF_vect) {
 
 #endif
 #if defined(TIMER5_OVF_vect)
+#else
 
 ISR(TIMER5_OVF_vect) {
 	if (Timer5On == true) {
@@ -7254,6 +7256,8 @@ ISR(TIMER5_OVF_vect) {
 #if TIMER_OVF == 2
 
 
+#if defined(TIMER1_OVF_vect)
+#else
 ISR(TIMER1_OVF_vect) {
 	if (Timer1On == true) {
 		TCNT1 = ITIMER::tcnt1;
@@ -7277,8 +7281,9 @@ ISR(TIMER1_OVF_vect) {
 		TimerCount1C++;
 	}
 }
-
+#endif
 #if defined(TIMER3_OVF_vect)
+#else
 ISR(TIMER3_OVF_vect) {
 	if (Timer3On == true) {
 		TCNT3 = ITIMER::tcnt3;
